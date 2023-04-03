@@ -23,7 +23,13 @@ const font = localFont({
 });
 
 function Layout({ children }: { children: React.ReactNode }) {
-  return <main className={`${font.variable} font-sans`}>{children}</main>;
+  return (
+    <main
+      className={`${font.variable} font-sans bg-magnolia h-screen text-coolGray w-screen`}
+    >
+      {children}
+    </main>
+  );
 }
 
 export default Layout;
