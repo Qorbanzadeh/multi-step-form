@@ -39,7 +39,7 @@ function Step2FormContent() {
               "flex items-start justify-start w-full px-4 py-2 space-x-4 border rounded-lg":
                 true,
               " border-lightGray": selectedPlan.title !== plan.title,
-              "border-marinBlue bg-marinBlue bg-opacity-5":
+              "border-purplishBlue bg-purplishBlue bg-opacity-5":
                 selectedPlan.title === plan.title,
             })}
             onClick={() => setSelectedPlan(plan)}
