@@ -1,14 +1,17 @@
 // library imports
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
 
 // asset imports
 import MobileBgSlideBar from "../assets/images/bg-sidebar-mobile.svg";
-import { useState } from "react";
+
+// component imports
 import FormHeader from "./form-header.component";
 import Step1FormContent from "./step-1-form-content.component";
-import { cursorTo } from "readline";
 import Step2FormContent from "./step-2-form-content.component";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const steps = [
   {
@@ -40,6 +43,13 @@ const steps = [
 
 function Form() {
   const [currentStep, setCurrentStep] = useState(steps[0]);
+  const { asPath } = useRouter();
+
+  useEffect(() => {
+    const hash = asPath.split("#")[1];
+    const currentStep = steps.find((step) => step.id === hash) || steps[0];
+    if (hash) setCurrentStep(currentStep);
+  }, [asPath]);
 
   return (
     <div className="relative flex items-start justify-center h-screen">
@@ -56,9 +66,9 @@ function Form() {
         {/* steps */}
         <div className="flex items-center justify-center p-8 space-x-4 text-white bg-transparent">
           {steps.map((step, index) => (
-            <span
+            <Link
+              href={`#${step.id}`}
               key={index}
-              onClick={() => setCurrentStep(step)}
               className={clsx({
                 "cursor-pointer rounded-full w-[30px] h-[30px] grid place-items-center transition-all duration-300 ease-in-out":
                   true,
@@ -67,7 +77,7 @@ function Form() {
               })}
             >
               {step.number}
-            </span>
+            </Link>
           ))}
         </div>
         {/* step */}
