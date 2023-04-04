@@ -8,6 +8,7 @@ import { useState } from "react";
 import FormHeader from "./form-header.component";
 import Step1FormContent from "./step-1-form-content.component";
 import { cursorTo } from "readline";
+import Step2FormContent from "./step-2-form-content.component";
 
 const steps = [
   {
@@ -22,6 +23,7 @@ const steps = [
     number: 2,
     title: "Select your plan",
     description: "You have the option of monthly or yearly billing.",
+    content: <Step2FormContent />,
   },
   {
     number: 3,
@@ -58,7 +60,7 @@ function Form() {
               key={index}
               onClick={() => setCurrentStep(step)}
               className={clsx({
-                "rounded-full w-[30px] h-[30px] grid place-items-center transition-all duration-300 ease-in-out":
+                "cursor-pointer rounded-full w-[30px] h-[30px] grid place-items-center transition-all duration-300 ease-in-out":
                   true,
                 "border border-white": currentStep !== step,
                 "bg-lightBlue text-marinBlue": currentStep === step,
@@ -69,7 +71,7 @@ function Form() {
           ))}
         </div>
         {/* step */}
-        <div className="w-[350px] bg-white rounded-lg p-6">
+        <div className="w-[240px] mobile:w-[350px] bg-white rounded-lg p-6">
           <FormHeader
             title={currentStep.title}
             description={currentStep.description}
@@ -79,11 +81,11 @@ function Form() {
           </form>
         </div>
       </div>
-      <div className="absolute bottom-0 flex items-center justify-end w-full p-4 bg-white">
+      <div className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-end w-full p-4 bg-white">
         <button
           form={currentStep.id}
           type="submit"
-          className="p-4 text-white rounded-lg bg-marinBlue"
+          className="p-2 sm:p-4 min-w-[30vw] h-[50px] text-white rounded-md bg-marinBlue"
         >
           Next Step
         </button>
