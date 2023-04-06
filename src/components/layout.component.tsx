@@ -1,4 +1,5 @@
 // library imports
+import { FormProvider } from "@/contexts/form.context";
 import localFont from "next/font/local";
 
 const font = localFont({
@@ -24,11 +25,13 @@ const font = localFont({
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main
-      className={`${font.variable} font-sans bg-magnolia h-screen text-coolGray w-screen`}
-    >
-      {children}
-    </main>
+    <>
+      <main
+        className={`${font.variable} antialiased font-sans bg-magnolia h-screen text-coolGray w-screen`}
+      >
+        <FormProvider>{children}</FormProvider>
+      </main>
+    </>
   );
 }
 
