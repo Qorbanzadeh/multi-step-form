@@ -1,17 +1,22 @@
 // library imports
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { clsx } from "clsx";
+import { FormEvent, useState } from "react";
 
 // asset imports
 import MobileBgSlideBar from "../assets/images/bg-sidebar-mobile.svg";
 
 // component imports
 import FormHeader from "./form-header.component";
-import Step1FormContent from "./step-1-form-content.component";
-import Step2FormContent from "./step-2-form-content.component";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import PersonalInfoFormContent from "./personal-info-form-content.component";
+import PlanInfoFormContent from "./plan-info-form-content.component";
+import AddOnFormContent from "./add-on-info-form-content.component";
+
+// hooks
+import { useMultiStepForm } from "@/hooks/use-multi-step-form.hook";
+import { useFormContext } from "@/contexts/form.context";
+import { validateFormFields } from "@/utils";
+import FinishedFormContent from "./finished-form-content.component";
 
 const steps = [
   {
@@ -19,37 +24,44 @@ const steps = [
     number: 1,
     title: "Personal info",
     description: "Please provide your name, email, address, and phone number.",
-    content: <Step1FormContent />,
+    content: <PersonalInfoFormContent />,
   },
   {
     id: "plan",
     number: 2,
     title: "Select your plan",
     description: "You have the option of monthly or yearly billing.",
-    content: <Step2FormContent />,
+    content: <PlanInfoFormContent />,
   },
   {
+    id: "add-ons",
     number: 3,
-    title: "add-ons",
+    title: "Pick add-ons",
     description: "Add-ons help enhance your gaming experience.",
+    content: <AddOnFormContent />,
   },
   {
     id: "finishing-up",
     number: 4,
     title: "Finishing up",
     description: "Double-check everything looks OK before confirming.",
+    content: <FinishedFormContent />,
   },
 ];
 
 function Form() {
-  const [currentStep, setCurrentStep] = useState(steps[0]);
-  const { asPath } = useRouter();
+  const { currentStep, backStep, nextStep, isFirstStep, isLastStep } =
+    useMultiStepForm(steps);
 
-  useEffect(() => {
-    const hash = asPath.split("#")[1];
-    const currentStep = steps.find((step) => step.id === hash) || steps[0];
-    if (hash) setCurrentStep(currentStep);
-  }, [asPath]);
+  const { data, setErrors } = useFormContext();
+
+  function onSubmitHandler(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const isFormValid = validateFormFields(data, setErrors);
+    if (isFormValid) {
+      nextStep();
+    }
+  }
 
   return (
     <div className="relative flex items-start justify-center h-screen">
@@ -66,18 +78,18 @@ function Form() {
         {/* steps */}
         <div className="flex items-center justify-center p-8 space-x-4 text-white bg-transparent">
           {steps.map((step, index) => (
-            <Link
-              href={`#${step.id}`}
+            <span
               key={index}
               className={clsx({
-                "cursor-pointer rounded-full w-[30px] h-[30px] grid place-items-center transition-all duration-300 ease-in-out":
+                "rounded-full w-[30px] h-[30px] grid place-items-center transition-all duration-300 ease-in-out":
                   true,
                 "border border-white": currentStep !== step,
-                "bg-lightBlue text-marinBlue": currentStep === step,
+                "bg-lightBlue text-marinBlue cursor-default":
+                  currentStep === step,
               })}
             >
               {step.number}
-            </Link>
+            </span>
           ))}
         </div>
         {/* step */}
@@ -86,18 +98,37 @@ function Form() {
             title={currentStep.title}
             description={currentStep.description}
           />
-          <form className="pt-2" id={currentStep.id}>
+          <form className="pt-2" id={currentStep.id} onSubmit={onSubmitHandler}>
             {currentStep.content && currentStep.content}
           </form>
         </div>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-end w-full p-4 bg-white">
+      <div
+        className={clsx({
+          "fixed inset-x-0 bottom-0 z-50 flex items-center justify-between w-full p-4 bg-white":
+            true,
+        })}
+      >
+        <button
+          disabled={isFirstStep}
+          onClick={backStep}
+          className={clsx({
+            "text-coolGray cursor-pointer": !isFirstStep,
+            "text-transparent": isFirstStep,
+          })}
+        >
+          Go back
+        </button>
         <button
           form={currentStep.id}
           type="submit"
-          className="p-2 sm:p-4 min-w-[30vw] h-[50px] text-white rounded-md bg-marinBlue"
+          className={clsx({
+            "p-2 sm:p-4 min-w-[30vw] h-[50px] text-white rounded-md": true,
+            "bg-marinBlue": !isLastStep,
+            "bg-purplishBlue": isLastStep,
+          })}
         >
-          Next Step
+          {isLastStep ? "Confirm" : "Next Step"}
         </button>
       </div>
     </div>

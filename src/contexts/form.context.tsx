@@ -3,15 +3,36 @@ import { createContext, useContext, useState } from "react";
 
 // context
 type FormContextProps = {
-  formData: FormsData;
-  updateFormData: ({ ...data }) => void;
-  formValidate: (value: string, type: "name" | "email" | "phone") => void;
+  data: FormFieldsData;
+  updateFields: (fields: Partial<FormFieldsData>) => void;
+  setErrors: (type: string, value: string) => void;
+  isFormValid: boolean;
 };
 
 export const FormContext = createContext<FormContextProps>({
-  formData: {},
-  updateFormData: () => {},
-  formValidate: () => {},
+  data: {
+    name: "",
+    email: "",
+    phone: "",
+    plan: {
+      title: "Arcade",
+      price: {
+        monthly: "9",
+        yearly: "90",
+      },
+      icon: "ArcadeIcon",
+    },
+    yearlyPlan: false,
+    addOnes: [],
+    errors: {
+      name: "",
+      email: "",
+      phone: "",
+    },
+  },
+  updateFields: () => {},
+  setErrors: () => {},
+  isFormValid: false,
 });
 
 export const useFormContext = () => useContext(FormContext);
@@ -21,96 +42,57 @@ type FormProviderProps = {
   children: React.ReactNode;
 };
 
+const INITIAL_DATA: FormFieldsData = {
+  name: "",
+  email: "",
+  phone: "",
+  plan: {
+    title: "Arcade",
+    price: {
+      monthly: "9",
+      yearly: "90",
+    },
+    icon: "ArcadeIcon",
+  },
+  yearlyPlan: false,
+  addOnes: [],
+  errors: {
+    name: "",
+    email: "",
+    phone: "",
+  },
+};
+
 export const FormProvider = ({ children }: FormProviderProps) => {
-  const [formData, setFormData] = useState<FormsData>({});
+  const [data, setData] = useState(INITIAL_DATA);
 
-  const updateFormData = ({ ...data }) => {
-    setFormData({
-      ...formData,
-      ...data,
+  function updateFields(fields: Partial<FormFieldsData>) {
+    setData((prev) => {
+      return {
+        ...prev,
+        ...fields,
+      };
     });
+  }
+
+  function setErrors(type: string, value: string) {
+    setData((prev) => {
+      return {
+        ...prev,
+        errors: {
+          ...prev.errors,
+          [type]: value,
+        },
+      };
+    });
+  }
+
+  const values = {
+    data,
+    updateFields,
+    setErrors,
+    isFormValid: Object.values(data.errors).every((value) => value === ""),
   };
 
-  const formValidate = (value: string, type: "name" | "email" | "phone") => {
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-    const prevErrors = formData.errors || {
-      name: "",
-      email: "",
-      phone: "",
-    };
-    switch (type) {
-      case "email":
-        if (!value.length) {
-          setFormData({
-            ...formData,
-            errors: {
-              ...prevErrors,
-              email: "Please enter an email address",
-            },
-          });
-          return false;
-        }
-        if (!emailRegex.test(String(value).toLowerCase())) {
-          setFormData({
-            ...formData,
-            errors: {
-              ...prevErrors,
-              email: "Please enter a valid email address",
-            },
-          });
-          return false;
-        }
-        setFormData({
-          ...formData,
-          email: "",
-        });
-        return true;
-      case "name":
-        if (!value.length) {
-          setFormData({
-            ...formData,
-            errors: {
-              ...prevErrors,
-              name: "Please enter your name",
-            },
-          });
-          return false;
-        }
-        setFormData({
-          ...formData,
-          errors: {
-            ...prevErrors,
-            name: "",
-          },
-        });
-        return true;
-      case "phone":
-        if (!value.length) {
-          setFormData({
-            ...formData,
-            errors: {
-              ...prevErrors,
-              phone: "Please enter a phone number",
-            },
-          });
-          return false;
-        }
-        setFormData({
-          ...formData,
-          errors: {
-            ...prevErrors,
-            phone: "",
-          },
-        });
-        return true;
-      default:
-        return false;
-    }
-  };
-
-  return (
-    <FormContext.Provider value={{ formData, updateFormData, formValidate }}>
-      {children}
-    </FormContext.Provider>
-  );
+  return <FormContext.Provider value={values}>{children}</FormContext.Provider>;
 };

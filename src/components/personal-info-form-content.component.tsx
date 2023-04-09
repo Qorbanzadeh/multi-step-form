@@ -3,6 +3,7 @@ import clsx from "clsx";
 
 // context
 import { useFormContext } from "../contexts/form.context";
+import { inputValidator } from "@/utils";
 
 interface InputType {
   name: "name" | "email" | "phone";
@@ -32,13 +33,23 @@ const step1Inputs: InputType[] = [
   },
 ];
 
-function Step1FormContent() {
-  const { formData, formValidate, updateFormData } = useFormContext();
-  const { errors } = formData;
+function PersonalInfoFormContent() {
+  const { data, updateFields, setErrors } = useFormContext();
+  const { errors } = data;
+
+  function onBlurHandler(e: React.FocusEvent<HTMLInputElement>) {
+    const name = e.target.name as "name" | "email" | "phone";
+    const { error, isInputValid } = inputValidator(data[name], name);
+    if (!isInputValid) {
+      setErrors(name, error);
+    } else {
+      setErrors(name, "");
+    }
+  }
 
   return (
     <>
-      {step1Inputs.map(({ name, label }) => (
+      {step1Inputs.map(({ name, label, placeholder, type }) => (
         <label key={name} className="flex flex-col pt-4">
           <div className="flex items-center justify-between">
             <span className="text-marinBlue">{label}</span>
@@ -50,18 +61,16 @@ function Step1FormContent() {
           </div>
           <input
             name={name}
-            value={formData[name]}
-            onChange={(e) => updateFormData({ [name]: e.target.value })}
-            onBlur={(e) => {
-              formValidate(e.target.value, name);
-            }}
-            type="text"
-            placeholder="e.g. Stephen King"
-            className={clsx(
-              "p-2 border rounded-m text-marinBlue",
-              errors?.[name] && "border-strawberryRed",
-              !errors?.[name] && "border-coolGray"
-            )}
+            value={data[name]}
+            onChange={(e) => updateFields({ [name]: e.target.value })}
+            onBlur={onBlurHandler}
+            type={type}
+            placeholder={placeholder}
+            className={clsx({
+              "p-2 border rounded-m text-marinBlue": true,
+              "border-strawberryRed": errors?.[name],
+              "border-coolGray": !errors?.[name],
+            })}
           />
         </label>
       ))}
@@ -69,4 +78,4 @@ function Step1FormContent() {
   );
 }
 
-export default Step1FormContent;
+export default PersonalInfoFormContent;

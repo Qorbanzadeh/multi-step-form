@@ -1,9 +1,19 @@
+interface Step {
+  id: string;
+  number: number;
+  title: string;
+  description: string;
+  content: ReactElement;
+}
+
+interface Price {
+  monthly: string;
+  yearly: string;
+}
+
 interface Plan {
   title: string;
-  price: {
-    monthly: string;
-    yearly: string;
-  };
+  price: Price;
   icon: any;
 }
 
@@ -11,21 +21,19 @@ interface AddOn {
   id: string;
   title: string;
   description: string;
-  price: string;
+  price: Price;
 }
 
-interface FormsData {
-  name?: string;
-  email?: string;
-  phone?: string;
-  plan?: {
-    name: "arcade" | "advanced" | "pro";
-    type: "monthly" | "yearly";
-  };
-  addOnes?: AddOn[];
-  errors?: {
+type FormFieldsData = {
+  name: string;
+  email: string;
+  phone: string;
+  plan: Plan;
+  yearlyPlan: boolean;
+  addOnes: AddOn[];
+  errors: {
     name: string;
     email: string;
     phone: string;
   };
-}
+};

@@ -1,62 +1,78 @@
 // library imports
 import Image from "next/image";
 import { useState } from "react";
+import clsx from "clsx";
 
 // asset imports
 import ArcadeIcon from "../assets/images/icon-arcade.svg";
 import AdvancedIcon from "../assets/images/icon-advanced.svg";
 import ProIcon from "../assets/images/icon-pro.svg";
-import clsx from "clsx";
+import { useFormContext } from "@/contexts/form.context";
 
-const plans = [
+const plans: Plan[] = [
   {
     title: "Arcade",
-    price: "9",
+    price: {
+      monthly: "9",
+      yearly: "90",
+    },
     icon: ArcadeIcon,
   },
   {
     title: "Advanced",
-    price: "12",
+    price: {
+      monthly: "12",
+      yearly: "120",
+    },
     icon: AdvancedIcon,
   },
   {
     title: "Pro",
-    price: "15",
+    price: {
+      monthly: "15",
+      yearly: "150",
+    },
     icon: ProIcon,
   },
 ];
 
-function Step2FormContent() {
-  const [isYearly, setIsYearly] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(plans[0]);
+function PlanInfoFormContent() {
+  const {
+    data: { plan, yearlyPlan },
+    updateFields,
+  } = useFormContext();
+
   return (
     <div className="flex flex-col items-center justify-start mt-2">
       <div className="flex flex-col items-center justify-center w-full space-y-2">
-        {plans.map((plan) => (
+        {plans.map((item) => (
           <div
-            key={plan.title}
+            key={item.title}
             className={clsx({
               "flex items-start justify-start w-full px-4 py-2 space-x-4 border rounded-lg":
                 true,
-              " border-lightGray": selectedPlan.title !== plan.title,
+              " border-lightGray": plan.title !== item.title,
               "border-purplishBlue bg-pastelBlue bg-opacity-5":
-                selectedPlan.title === plan.title,
+                plan.title === item.title,
             })}
-            onClick={() => setSelectedPlan(plan)}
+            onClick={() => updateFields({ plan: item })}
           >
             <div>
               <Image
                 priority
                 className="w-[40px] h-auto pt-2"
                 aria-hidden
-                src={plan.icon}
+                src={item.icon}
                 alt=""
               />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg font-bold text-marinBlue">{plan.title}</h1>
-              <p className="">{plan.price ? `\$${plan.price}/mo` : "Free"}</p>
-              {isYearly && (
+              <h1 className="text-lg font-bold text-marinBlue">{item.title}</h1>
+              <p className="">
+                ${yearlyPlan ? item.price.yearly : item.price.monthly}/
+                {yearlyPlan ? "yr" : "mo"}
+              </p>
+              {yearlyPlan && (
                 <p className="text-xs text-marinBlue">2 months free</p>
               )}
             </div>
@@ -67,13 +83,13 @@ function Step2FormContent() {
         <span className="text-marinBlue">Monthly</span>
         <div
           className="relative inline-block w-[30px] h-[18px] mobile:w-[40px] mobile:h-[24px] rounded-full bg-marinBlue"
-          onClick={() => setIsYearly(!isYearly)}
+          onClick={() => updateFields({ yearlyPlan: !yearlyPlan })}
         >
           <div
             className={clsx({
               "inline-block w-[10px] h-[10px] mobile:w-[16px] mobile:h-[16px] transform rounded-full bg-white absolute top-1 left-1 transition-all":
                 true,
-              "translate-x-full": isYearly,
+              "translate-x-full": yearlyPlan,
             })}
           />
         </div>
@@ -83,4 +99,4 @@ function Step2FormContent() {
   );
 }
 
-export default Step2FormContent;
+export default PlanInfoFormContent;
