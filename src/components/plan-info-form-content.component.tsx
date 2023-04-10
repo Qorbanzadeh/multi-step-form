@@ -49,7 +49,7 @@ function PlanInfoFormContent() {
           <div
             key={item.title}
             className={clsx({
-              "flex items-start justify-start w-full px-4 py-2 space-x-4 border rounded-lg":
+              "flex items-start justify-start w-full px-4 py-2 space-x-4 border rounded-lg cursor-pointer":
                 true,
               " border-lightGray": plan.title !== item.title,
               "border-purplishBlue bg-pastelBlue bg-opacity-5":
@@ -82,7 +82,7 @@ function PlanInfoFormContent() {
       <label className="flex items-center justify-center w-full mobile:px-8 py-2 mt-4 space-x-4  mobile:font-medium rounded-md bg-alabaster h-[50px]">
         <span className="text-marinBlue">Monthly</span>
         <div
-          className="relative inline-block w-[30px] h-[18px] mobile:w-[40px] mobile:h-[24px] rounded-full bg-marinBlue"
+          className="relative inline-block w-[30px] h-[18px] mobile:w-[40px] mobile:h-[24px] rounded-full bg-marinBlue cursor-pointer"
           onClick={() => updateFields({ yearlyPlan: !yearlyPlan })}
         >
           <div

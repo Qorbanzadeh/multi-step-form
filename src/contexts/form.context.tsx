@@ -1,12 +1,17 @@
 // library imports
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useContext,
+  // useEffect,
+  useState,
+} from "react";
 
 // context
 type FormContextProps = {
   data: FormFieldsData;
   updateFields: (fields: Partial<FormFieldsData>) => void;
   setErrors: (type: string, value: string) => void;
-  isFormValid: boolean;
+  // saveData: () => void;
 };
 
 export const FormContext = createContext<FormContextProps>({
@@ -32,7 +37,7 @@ export const FormContext = createContext<FormContextProps>({
   },
   updateFields: () => {},
   setErrors: () => {},
-  isFormValid: false,
+  // saveData: () => {},
 });
 
 export const useFormContext = () => useContext(FormContext);
@@ -66,6 +71,20 @@ const INITIAL_DATA: FormFieldsData = {
 export const FormProvider = ({ children }: FormProviderProps) => {
   const [data, setData] = useState(INITIAL_DATA);
 
+  // TODO: add local storage functionality
+  // useEffect(() => {
+  //   // Load state from storage when the component mounts
+  //   const storedState = localStorage.getItem("form-data");
+  //   if (storedState) {
+  //     setData(JSON.parse(storedState));
+  //   }
+  // }, []);
+
+  // function saveData() {
+  //   localStorage.removeItem("form-data");
+  //   localStorage.setItem("form-data", JSON.stringify(data));
+  // }
+
   function updateFields(fields: Partial<FormFieldsData>) {
     setData((prev) => {
       return {
@@ -91,7 +110,7 @@ export const FormProvider = ({ children }: FormProviderProps) => {
     data,
     updateFields,
     setErrors,
-    isFormValid: Object.values(data.errors).every((value) => value === ""),
+    // saveData,
   };
 
   return <FormContext.Provider value={values}>{children}</FormContext.Provider>;

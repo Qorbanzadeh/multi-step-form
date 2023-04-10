@@ -1,10 +1,11 @@
 // library imports
 import Image from "next/image";
 import { clsx } from "clsx";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 // asset imports
 import MobileBgSlideBar from "../assets/images/bg-sidebar-mobile.svg";
+import DesktopBgSlideBar from "../assets/images/bg-sidebar-desktop.svg";
 
 // component imports
 import FormHeader from "./form-header.component";
@@ -16,9 +17,10 @@ import AddOnFormContent from "./add-on-info-form-content.component";
 import { useMultiStepForm } from "@/hooks/use-multi-step-form.hook";
 import { useFormContext } from "@/contexts/form.context";
 import { validateFormFields } from "@/utils";
-import FinishedFormContent from "./finished-form-content.component";
+import ConfirmationFormContent from "./confirmation-form-content.component";
+import FinishedFormContent from "./Finished-form-content.component";
 
-const steps = [
+const steps: Step[] = [
   {
     id: "personal-info",
     number: 1,
@@ -45,7 +47,7 @@ const steps = [
     number: 4,
     title: "Finishing up",
     description: "Double-check everything looks OK before confirming.",
-    content: <FinishedFormContent />,
+    content: <ConfirmationFormContent />,
   },
 ];
 
@@ -55,17 +57,21 @@ function Form() {
 
   const { data, setErrors } = useFormContext();
 
+  const [isFormFinished, setIsFormFinished] = useState(false);
+
   function onSubmitHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const isFormValid = validateFormFields(data, setErrors);
     if (isFormValid) {
+      if (isLastStep) return setIsFormFinished(true);
+      // go to next step
       nextStep();
     }
   }
 
   return (
-    <div className="relative flex items-start justify-center h-screen">
-      <div className="absolute top-0 w-full ">
+    <div className="relative flex items-start justify-center w-full h-screen">
+      <div className="absolute top-0 md:hidden">
         <Image
           priority
           className="w-full"
@@ -74,63 +80,111 @@ function Form() {
           alt=""
         />
       </div>
-      <div className="z-20 flex flex-col items-center justify-center">
-        {/* steps */}
-        <div className="flex items-center justify-center p-8 space-x-4 text-white bg-transparent">
+      <div className="z-20 md:w-[60%] flex md:h-[90%] flex-col items-center justify-center overflow-hidden rounded-md md:my-auto md:flex md:flex-row md:bg-white md:p-4">
+        <div className="relative flex items-center justify-start md:w-[30%] h-full p-8 space-x-4 text-white bg-transparent md:flex md:flex-col md:space-y-4 md:flex-shrink-0">
+          <Image
+            priority
+            className="absolute flex-shrink-0 hidden object-none rounded-md md:inline-block -z-20"
+            aria-hidden
+            src={DesktopBgSlideBar}
+            alt=""
+          />
           {steps.map((step, index) => (
-            <span
-              key={index}
-              className={clsx({
-                "rounded-full w-[30px] h-[30px] grid place-items-center transition-all duration-300 ease-in-out":
-                  true,
-                "border border-white": currentStep !== step,
-                "bg-lightBlue text-marinBlue cursor-default":
-                  currentStep === step,
-              })}
+            <div
+              className="flex items-center justify-start w-full space-x-2 "
+              key={step.id}
             >
-              {step.number}
-            </span>
+              <span
+                className={clsx({
+                  "rounded-full w-[30px] h-[30px] grid place-items-center transition-all duration-300 ease-in-out":
+                    true,
+                  "border border-white": currentStep !== step,
+                  "bg-lightBlue text-marinBlue cursor-default":
+                    currentStep === step,
+                })}
+              >
+                {step.number}
+              </span>
+              <span className="hidden md:inline-block">{step.title}</span>
+            </div>
           ))}
         </div>
-        {/* step */}
-        <div className="w-[240px] mobile:w-[350px] bg-white rounded-lg p-6">
-          <FormHeader
-            title={currentStep.title}
-            description={currentStep.description}
-          />
-          <form className="pt-2" id={currentStep.id} onSubmit={onSubmitHandler}>
-            {currentStep.content && currentStep.content}
-          </form>
+        <div className="relative w-[240px] mobile:w-[350px] md:w-[70%] bg-white rounded-lg p-6 flex flex-col items-center mobile:items-start justify-start md:h-full">
+          {!isFormFinished ? (
+            <>
+              <FormHeader
+                title={currentStep.title}
+                description={currentStep.description}
+              />
+              <form
+                className="w-full pt-2"
+                id={currentStep.id}
+                onSubmit={onSubmitHandler}
+              >
+                {currentStep.content && currentStep.content}
+                <div className="absolute inset-x-0 bottom-0 items-center justify-between hidden w-full p-2 py-4 mb-0 md:flex">
+                  <button
+                    disabled={isFirstStep}
+                    onClick={backStep}
+                    type="button"
+                    className={clsx({
+                      "text-coolGray cursor-pointer": !isFirstStep,
+                      "text-transparent": isFirstStep,
+                    })}
+                  >
+                    Go back
+                  </button>
+                  <button
+                    form={currentStep.id}
+                    type="submit"
+                    className={clsx({
+                      "p-2 w-[10vw] h-[50px] text-white rounded-md text-sm":
+                        true,
+                      "bg-marinBlue": !isLastStep,
+                      "bg-purplishBlue": isLastStep,
+                    })}
+                  >
+                    {isLastStep ? "Confirm" : "Next Step"}
+                  </button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <FinishedFormContent />
+          )}
         </div>
       </div>
-      <div
-        className={clsx({
-          "fixed inset-x-0 bottom-0 z-50 flex items-center justify-between w-full p-4 bg-white":
-            true,
-        })}
-      >
-        <button
-          disabled={isFirstStep}
-          onClick={backStep}
+      {!isFormFinished && (
+        <div
           className={clsx({
-            "text-coolGray cursor-pointer": !isFirstStep,
-            "text-transparent": isFirstStep,
+            "md:hidden fixed inset-x-0 bottom-0 z-50 flex items-center justify-between w-full p-4 bg-white":
+              true,
           })}
         >
-          Go back
-        </button>
-        <button
-          form={currentStep.id}
-          type="submit"
-          className={clsx({
-            "p-2 sm:p-4 min-w-[30vw] h-[50px] text-white rounded-md": true,
-            "bg-marinBlue": !isLastStep,
-            "bg-purplishBlue": isLastStep,
-          })}
-        >
-          {isLastStep ? "Confirm" : "Next Step"}
-        </button>
-      </div>
+          <button
+            disabled={isFirstStep}
+            onClick={backStep}
+            className={clsx({
+              "text-coolGray cursor-pointer": !isFirstStep,
+              "text-transparent": isFirstStep,
+            })}
+          >
+            Go back
+          </button>
+          <button
+            form={currentStep.id}
+            type="submit"
+            className={clsx({
+              "p-2 sm:p-4 w-[25vw] md:w-[12vw] h-[50px] text-white rounded-md text-sm":
+                true,
+              "bg-marinBlue": !isLastStep,
+              "bg-purplishBlue": isLastStep,
+            })}
+          >
+            {isLastStep ? "Confirm" : "Next Step"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

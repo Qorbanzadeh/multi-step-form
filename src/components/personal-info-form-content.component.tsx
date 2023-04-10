@@ -22,7 +22,7 @@ const step1Inputs: InputType[] = [
   {
     name: "email",
     label: "Email Address",
-    type: "email",
+    type: "text",
     placeholder: "e.g. stephenking@lorem.com",
   },
   {
