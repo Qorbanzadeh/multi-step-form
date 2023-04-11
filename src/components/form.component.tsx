@@ -4,12 +4,12 @@ import { clsx } from "clsx";
 import { FormEvent, useContext, useState } from "react";
 
 // asset imports
-import MobileBgSlideBar from "../assets/images/bg-sidebar-mobile.svg";
-import DesktopBgSlideBar from "../assets/images/bg-sidebar-desktop.svg";
+import MobileBgSlideBar from "@/components/assets/images/bg-sidebar-mobile.svg";
+import DesktopBgSlideBar from "@/components/assets/images/bg-sidebar-desktop.svg";
 
 // component imports
-import FormHeader from "./form-header.component";
-import FinishedFormContent from "./Finished-form-content.component";
+import FormHeader from "@/components/form-header.component";
+import FinishedFormContent from "@/components/Finished-form-content.component";
 
 // context
 import { FormContext } from "@/contexts/form.context";
