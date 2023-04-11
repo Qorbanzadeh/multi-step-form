@@ -27,7 +27,7 @@ function ConfirmationFormContent() {
               {plan.title} ({yearlyPlan ? "Yearly" : "Monthly"})
             </span>
             <span
-              className="underline"
+              className="underline cursor-pointer"
               onClick={() => {
                 const index = formSteps.findIndex((step) => step.number === 2);
                 updateFormData({
