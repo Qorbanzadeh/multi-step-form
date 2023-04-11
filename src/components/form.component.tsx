@@ -51,7 +51,7 @@ function Form() {
   }
 
   return (
-    <div className="relative flex items-start justify-center w-full h-screen">
+    <div className="relative flex items-start justify-center w-full h-screen shadow-lg">
       <div className="absolute top-0 md:hidden">
         <Image
           priority
@@ -65,7 +65,7 @@ function Form() {
         <div className="relative flex items-center justify-start md:w-[40%] h-full p-8 space-x-4 text-white bg-transparent md:flex md:flex-col md:space-y-4 md:flex-shrink-0">
           <Image
             priority
-            className="absolute inset-y-0 flex-shrink-0 hidden object-cover w-full h-full rounded-md md:inline-block -z-20"
+            className="absolute inset-y-0 flex-shrink-0 hidden object-cover w-full h-full rounded-md shadow-lg md:inline-block -z-20"
             aria-hidden
             src={DesktopBgSlideBar}
             alt=""
@@ -86,7 +86,14 @@ function Form() {
               >
                 {step.number}
               </span>
-              <span className="hidden md:inline-block">{step.id}</span>
+              <div className="flex flex-col items-start justify-center uppercase">
+                <span className="hidden font-bold md:inline-block text-coolGray">
+                  {step.name}
+                </span>
+                <span className="hidden font-bold md:inline-block">
+                  {step.id}
+                </span>
+              </div>
             </div>
           ))}
         </div>

@@ -1,4 +1,5 @@
 interface Step {
+  name: string;
   id: string;
   number: number;
   title: string;

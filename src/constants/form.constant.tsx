@@ -5,6 +5,7 @@ import PlanInfoFormContent from "@/components/plan-info-form-content.component";
 
 export const formSteps: Step[] = [
   {
+    name: "step 1",
     id: "your info",
     number: 1,
     title: "Personal info",
@@ -12,6 +13,7 @@ export const formSteps: Step[] = [
     content: <PersonalInfoFormContent />,
   },
   {
+    name: "step 2",
     id: "select plan",
     number: 2,
     title: "Select your plan",
@@ -19,6 +21,7 @@ export const formSteps: Step[] = [
     content: <PlanInfoFormContent />,
   },
   {
+    name: "step 3",
     id: "add-ons",
     number: 3,
     title: "Pick add-ons",
@@ -26,6 +29,7 @@ export const formSteps: Step[] = [
     content: <AddOnFormContent />,
   },
   {
+    name: "step 4",
     id: "summary",
     number: 4,
     title: "Finishing up",
