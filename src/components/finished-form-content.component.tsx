@@ -5,8 +5,8 @@ import ThankYouIcon from "../assets/images/icon-thank-you.svg";
 
 function FinishedFormContent() {
   return (
-    <div className="flex flex-col items-center justify-center space-y-2 text-center">
-      <div className="w-[50px] h-[50px]">
+    <div className="flex flex-col items-center justify-center space-y-2 text-center md:my-auto">
+      <div className="w-[50px] h-[50px] md:w-[100px] md:h-[100px]">
         <Image src={ThankYouIcon} alt="Thank you icon" />
       </div>
       <h2 className="text-2xl font-bold text-marinBlue">Thank you!</h2>
