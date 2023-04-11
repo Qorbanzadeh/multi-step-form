@@ -65,7 +65,7 @@ function Form() {
         <div className="relative flex items-center justify-start md:w-[40%] h-full p-8 space-x-4 text-white bg-transparent md:flex md:flex-col md:space-y-4 md:flex-shrink-0">
           <Image
             priority
-            className="absolute flex-shrink-0 hidden object-cover w-full h-full rounded-md md:inline-block -z-20"
+            className="absolute inset-y-0 flex-shrink-0 hidden object-cover w-full h-full rounded-md md:inline-block -z-20"
             aria-hidden
             src={DesktopBgSlideBar}
             alt=""
