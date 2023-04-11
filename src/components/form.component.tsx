@@ -103,7 +103,7 @@ function Form() {
                 onSubmit={onSubmitHandler}
               >
                 {currentStep.content && currentStep.content}
-                <div className="absolute inset-x-0 bottom-0 items-center justify-between hidden w-full p-2 py-4 mb-0 md:flex">
+                <div className="absolute inset-x-0 bottom-0 items-center justify-between hidden w-full p-8 py-4 mb-0 md:flex">
                   <button
                     disabled={isFirstStep}
                     onClick={() => updateFormData({ type: "back" })}
