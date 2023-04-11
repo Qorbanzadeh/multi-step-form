@@ -9,7 +9,7 @@ import DesktopBgSlideBar from "@/components/assets/images/bg-sidebar-desktop.svg
 
 // component imports
 import FormHeader from "@/components/form-header.component";
-import FinishedFormContent from "@/components/Finished-form-content.component";
+import FinishedFormContent from "@/components/finished-form-content.component";
 
 // context
 import { FormContext } from "@/contexts/form.context";
