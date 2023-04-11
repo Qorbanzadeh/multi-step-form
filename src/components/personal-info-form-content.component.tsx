@@ -2,8 +2,9 @@
 import clsx from "clsx";
 
 // context
-import { useFormContext } from "../contexts/form.context";
+import { FormContext } from "../contexts/form.context";
 import { inputValidator } from "@/utils";
+import { useContext } from "react";
 
 interface InputType {
   name: "name" | "email" | "phone";
@@ -34,16 +35,31 @@ const step1Inputs: InputType[] = [
 ];
 
 function PersonalInfoFormContent() {
-  const { data, updateFields, setErrors } = useFormContext();
-  const { errors } = data;
+  const {
+    formData: { fields },
+    updateFormData,
+  } = useContext(FormContext);
+  const { errors } = fields;
 
   function onBlurHandler(e: React.FocusEvent<HTMLInputElement>) {
     const name = e.target.name as "name" | "email" | "phone";
-    const { error, isInputValid } = inputValidator(data[name], name);
+    const { error, isInputValid } = inputValidator(fields[name], name);
     if (!isInputValid) {
-      setErrors(name, error);
+      updateFormData({
+        type: "setErrors",
+        payload: {
+          type: name,
+          value: error,
+        },
+      });
     } else {
-      setErrors(name, "");
+      updateFormData({
+        type: "setErrors",
+        payload: {
+          type: name,
+          value: "",
+        },
+      });
     }
   }
 
@@ -61,8 +77,13 @@ function PersonalInfoFormContent() {
           </div>
           <input
             name={name}
-            value={data[name]}
-            onChange={(e) => updateFields({ [name]: e.target.value })}
+            value={fields[name]}
+            onChange={(e) =>
+              updateFormData({
+                type: "updateFields",
+                payload: { [name]: e.target.value },
+              })
+            }
             onBlur={onBlurHandler}
             type={type}
             placeholder={placeholder}

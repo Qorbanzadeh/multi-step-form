@@ -1,5 +1,6 @@
-import { useFormContext } from "@/contexts/form.context";
+import { FormContext } from "@/contexts/form.context";
 import clsx from "clsx";
+import { useContext } from "react";
 
 const addOns: AddOn[] = [
   {
@@ -32,23 +33,29 @@ const addOns: AddOn[] = [
 ];
 
 function AddOnFormContent() {
-  // Define state for selected add-ons
-  // const [selectedAddOns, setSelectedAddOns] = useState<AddOn[]>([]);
   const {
-    data: { addOnes, yearlyPlan },
-    updateFields,
-  } = useFormContext();
+    formData: {
+      fields: { addOnes, yearlyPlan },
+    },
+    updateFormData,
+  } = useContext(FormContext);
 
   const onChangeHandler = (addOn: AddOn) => {
     if (addOnes.includes(addOn)) {
       const selectedAddOns = addOnes.filter((item) => item !== addOn);
-      updateFields({
-        addOnes: selectedAddOns,
+      updateFormData({
+        type: "updateFields",
+        payload: {
+          addOnes: selectedAddOns,
+        },
       });
     } else {
       const selectedAddOns = [...addOnes, addOn];
-      updateFields({
-        addOnes: selectedAddOns,
+      updateFormData({
+        type: "updateFields",
+        payload: {
+          addOnes: selectedAddOns,
+        },
       });
     }
   };

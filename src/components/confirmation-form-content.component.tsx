@@ -1,10 +1,20 @@
-import { useFormContext } from "@/contexts/form.context";
+// constants
+import { formSteps } from "@/constants/form.constant";
+
+// context
+import { FormContext } from "@/contexts/form.context";
+
+// utils
 import { getTotalPrice } from "@/utils";
+import { useContext } from "react";
 
 function ConfirmationFormContent() {
   const {
-    data: { plan, addOnes, yearlyPlan },
-  } = useFormContext();
+    updateFormData,
+    formData: {
+      fields: { plan, yearlyPlan, addOnes },
+    },
+  } = useContext(FormContext);
   const totalPrice = getTotalPrice(plan, yearlyPlan, addOnes);
   return (
     <div>
@@ -16,7 +26,18 @@ function ConfirmationFormContent() {
             <span className="text-lg font-semibold text-marinBlue">
               {plan.title} ({yearlyPlan ? "Yearly" : "Monthly"})
             </span>
-            <span className="underline">change</span>
+            <span
+              className="underline"
+              onClick={() => {
+                const index = formSteps.findIndex((step) => step.number === 2);
+                updateFormData({
+                  type: "goTo",
+                  payload: index,
+                });
+              }}
+            >
+              change
+            </span>
           </div>
           <span className="font-semibold text-marinBlue">
             $

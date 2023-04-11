@@ -1,50 +1,24 @@
-// library imports
-import {
-  createContext,
-  useContext,
-  // useEffect,
-  useState,
-} from "react";
+import { createContext, useReducer } from "react";
 
-// context
-type FormContextProps = {
-  data: FormFieldsData;
-  updateFields: (fields: Partial<FormFieldsData>) => void;
-  setErrors: (type: string, value: string) => void;
-  // saveData: () => void;
+type Action =
+  | { type: "next" }
+  | { type: "back" }
+  | { type: "goTo"; payload: number }
+  | { type: "updateFields"; payload: Partial<FormFieldsData> }
+  | { type: "setErrors"; payload: { type: string; value: string } };
+
+type State = {
+  currentStepIndex: number;
+  fields: FormFieldsData;
 };
 
-export const FormContext = createContext<FormContextProps>({
-  data: {
-    name: "",
-    email: "",
-    phone: "",
-    plan: {
-      title: "Arcade",
-      price: {
-        monthly: "9",
-        yearly: "90",
-      },
-      icon: "ArcadeIcon",
-    },
-    yearlyPlan: false,
-    addOnes: [],
-    errors: {
-      name: "",
-      email: "",
-      phone: "",
-    },
-  },
-  updateFields: () => {},
-  setErrors: () => {},
-  // saveData: () => {},
-});
-
-export const useFormContext = () => useContext(FormContext);
-
-// provider
-type FormProviderProps = {
-  children: React.ReactNode;
+type ContextType = {
+  formData: State;
+  steps: Step[];
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  currentStep: Step;
+  updateFormData: React.Dispatch<Action>;
 };
 
 const INITIAL_DATA: FormFieldsData = {
@@ -57,7 +31,7 @@ const INITIAL_DATA: FormFieldsData = {
       monthly: "9",
       yearly: "90",
     },
-    icon: "ArcadeIcon",
+    icon: "",
   },
   yearlyPlan: false,
   addOnes: [],
@@ -68,50 +42,95 @@ const INITIAL_DATA: FormFieldsData = {
   },
 };
 
-export const FormProvider = ({ children }: FormProviderProps) => {
-  const [data, setData] = useState(INITIAL_DATA);
+export const FormContext = createContext<ContextType>({
+  formData: { currentStepIndex: 0, fields: INITIAL_DATA },
+  steps: [],
+  isFirstStep: true,
+  isLastStep: false,
+  updateFormData: () => {},
+  currentStep: {
+    title: "",
+    content: "",
+    description: "",
+    number: 0,
+    id: "",
+  },
+});
 
-  // TODO: add local storage functionality
-  // useEffect(() => {
-  //   // Load state from storage when the component mounts
-  //   const storedState = localStorage.getItem("form-data");
-  //   if (storedState) {
-  //     setData(JSON.parse(storedState));
-  //   }
-  // }, []);
-
-  // function saveData() {
-  //   localStorage.removeItem("form-data");
-  //   localStorage.setItem("form-data", JSON.stringify(data));
-  // }
-
-  function updateFields(fields: Partial<FormFieldsData>) {
-    setData((prev) => {
+function formReducer(formData: State, action: Action, steps: Step[]): State {
+  switch (action.type) {
+    case "next":
       return {
-        ...prev,
-        ...fields,
+        ...formData,
+        currentStepIndex:
+          formData.currentStepIndex < steps.length - 1
+            ? formData.currentStepIndex + 1
+            : formData.currentStepIndex,
       };
-    });
-  }
-
-  function setErrors(type: string, value: string) {
-    setData((prev) => {
+    case "back":
       return {
-        ...prev,
-        errors: {
-          ...prev.errors,
-          [type]: value,
+        ...formData,
+        currentStepIndex:
+          formData.currentStepIndex > 0
+            ? formData.currentStepIndex - 1
+            : formData.currentStepIndex,
+      };
+    case "goTo":
+      return {
+        ...formData,
+        currentStepIndex: action.payload,
+      };
+    case "updateFields":
+      return {
+        ...formData,
+        fields: { ...formData.fields, ...action.payload },
+      };
+    case "setErrors":
+      return {
+        ...formData,
+        fields: {
+          ...formData.fields,
+          errors: {
+            ...formData.fields.errors,
+            [action.payload.type]: action.payload.value,
+          },
         },
       };
-    });
+    default:
+      return formData;
   }
+}
 
-  const values = {
-    data,
-    updateFields,
-    setErrors,
-    // saveData,
-  };
+export function FormProvider(props: {
+  steps: Step[];
+  children: React.ReactNode;
+}) {
+  const [formData, updateFormData] = useReducer(
+    // @ts-ignore
+    (state, action) => formReducer(state, action, props.steps),
+    {
+      currentStepIndex: 0,
+      fields: INITIAL_DATA,
+    }
+  );
 
-  return <FormContext.Provider value={values}>{children}</FormContext.Provider>;
-};
+  const { steps } = props;
+  const isFirstStep = formData.currentStepIndex === 0;
+  const isLastStep = formData.currentStepIndex === steps.length - 1;
+  const currentStep = steps[formData.currentStepIndex];
+
+  return (
+    <FormContext.Provider
+      value={{
+        formData,
+        steps,
+        isFirstStep,
+        isLastStep,
+        updateFormData,
+        currentStep,
+      }}
+    >
+      {props.children}
+    </FormContext.Provider>
+  );
+}

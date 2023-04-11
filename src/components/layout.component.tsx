@@ -1,4 +1,5 @@
 // library imports
+import { formSteps } from "@/constants/form.constant";
 import { FormProvider } from "@/contexts/form.context";
 import localFont from "next/font/local";
 
@@ -29,7 +30,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <main
         className={`${font.variable} antialiased font-sans bg-magnolia h-screen text-coolGray w-screen`}
       >
-        <FormProvider>{children}</FormProvider>
+        <FormProvider steps={formSteps}>{children}</FormProvider>
       </main>
     </>
   );

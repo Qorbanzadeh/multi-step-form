@@ -1,7 +1,7 @@
 // library imports
 import Image from "next/image";
 import { clsx } from "clsx";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 
 // asset imports
 import MobileBgSlideBar from "../assets/images/bg-sidebar-mobile.svg";
@@ -9,63 +9,44 @@ import DesktopBgSlideBar from "../assets/images/bg-sidebar-desktop.svg";
 
 // component imports
 import FormHeader from "./form-header.component";
-import PersonalInfoFormContent from "./personal-info-form-content.component";
-import PlanInfoFormContent from "./plan-info-form-content.component";
-import AddOnFormContent from "./add-on-info-form-content.component";
-
-// hooks
-import { useMultiStepForm } from "@/hooks/use-multi-step-form.hook";
-import { useFormContext } from "@/contexts/form.context";
-import { validateFormFields } from "@/utils";
-import ConfirmationFormContent from "./confirmation-form-content.component";
 import FinishedFormContent from "./Finished-form-content.component";
 
-const steps: Step[] = [
-  {
-    id: "personal-info",
-    number: 1,
-    title: "Personal info",
-    description: "Please provide your name, email, address, and phone number.",
-    content: <PersonalInfoFormContent />,
-  },
-  {
-    id: "plan",
-    number: 2,
-    title: "Select your plan",
-    description: "You have the option of monthly or yearly billing.",
-    content: <PlanInfoFormContent />,
-  },
-  {
-    id: "add-ons",
-    number: 3,
-    title: "Pick add-ons",
-    description: "Add-ons help enhance your gaming experience.",
-    content: <AddOnFormContent />,
-  },
-  {
-    id: "finishing-up",
-    number: 4,
-    title: "Finishing up",
-    description: "Double-check everything looks OK before confirming.",
-    content: <ConfirmationFormContent />,
-  },
-];
+// context
+import { FormContext } from "@/contexts/form.context";
+
+// utils
+import { validateFormFields } from "@/utils";
+
+// constants
+import { formSteps } from "@/constants/form.constant";
 
 function Form() {
-  const { currentStep, backStep, nextStep, isFirstStep, isLastStep } =
-    useMultiStepForm(steps);
-
-  const { data, setErrors } = useFormContext();
+  const {
+    formData: { fields },
+    isLastStep,
+    isFirstStep,
+    currentStep,
+    updateFormData,
+  } = useContext(FormContext);
 
   const [isFormFinished, setIsFormFinished] = useState(false);
 
   function onSubmitHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const isFormValid = validateFormFields(data, setErrors);
+    const isFormValid = validateFormFields(fields, (name, value) =>
+      updateFormData({
+        type: "setErrors",
+        payload: {
+          type: name,
+          value: value,
+        },
+      })
+    );
     if (isFormValid) {
       if (isLastStep) return setIsFormFinished(true);
-      // go to next step
-      nextStep();
+      updateFormData({
+        type: "next",
+      });
     }
   }
 
@@ -81,15 +62,15 @@ function Form() {
         />
       </div>
       <div className="z-20 md:w-[60%] flex md:h-[90%] flex-col items-center justify-center overflow-hidden rounded-md md:my-auto md:flex md:flex-row md:bg-white md:p-4">
-        <div className="relative flex items-center justify-start md:w-[30%] h-full p-8 space-x-4 text-white bg-transparent md:flex md:flex-col md:space-y-4 md:flex-shrink-0">
+        <div className="relative flex items-center justify-start md:w-[40%] h-full p-8 space-x-4 text-white bg-transparent md:flex md:flex-col md:space-y-4 md:flex-shrink-0">
           <Image
             priority
-            className="absolute flex-shrink-0 hidden object-none rounded-md md:inline-block -z-20"
+            className="absolute flex-shrink-0 hidden object-cover w-full h-full rounded-md md:inline-block -z-20"
             aria-hidden
             src={DesktopBgSlideBar}
             alt=""
           />
-          {steps.map((step, index) => (
+          {formSteps.map((step, index) => (
             <div
               className="flex items-center justify-start w-full space-x-2 "
               key={step.id}
@@ -105,7 +86,7 @@ function Form() {
               >
                 {step.number}
               </span>
-              <span className="hidden md:inline-block">{step.title}</span>
+              <span className="hidden md:inline-block">{step.id}</span>
             </div>
           ))}
         </div>
@@ -125,7 +106,7 @@ function Form() {
                 <div className="absolute inset-x-0 bottom-0 items-center justify-between hidden w-full p-2 py-4 mb-0 md:flex">
                   <button
                     disabled={isFirstStep}
-                    onClick={backStep}
+                    onClick={() => updateFormData({ type: "back" })}
                     type="button"
                     className={clsx({
                       "text-coolGray cursor-pointer": !isFirstStep,
@@ -163,7 +144,7 @@ function Form() {
         >
           <button
             disabled={isFirstStep}
-            onClick={backStep}
+            onClick={() => updateFormData({ type: "back" })}
             className={clsx({
               "text-coolGray cursor-pointer": !isFirstStep,
               "text-transparent": isFirstStep,

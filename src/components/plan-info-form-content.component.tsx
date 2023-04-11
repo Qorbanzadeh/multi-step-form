@@ -1,13 +1,13 @@
 // library imports
 import Image from "next/image";
-import { useState } from "react";
 import clsx from "clsx";
 
 // asset imports
 import ArcadeIcon from "../assets/images/icon-arcade.svg";
 import AdvancedIcon from "../assets/images/icon-advanced.svg";
 import ProIcon from "../assets/images/icon-pro.svg";
-import { useFormContext } from "@/contexts/form.context";
+import { FormContext } from "@/contexts/form.context";
+import { useContext } from "react";
 
 const plans: Plan[] = [
   {
@@ -38,9 +38,11 @@ const plans: Plan[] = [
 
 function PlanInfoFormContent() {
   const {
-    data: { plan, yearlyPlan },
-    updateFields,
-  } = useFormContext();
+    formData: {
+      fields: { yearlyPlan, plan },
+    },
+    updateFormData,
+  } = useContext(FormContext);
 
   return (
     <div className="flex flex-col items-center justify-start mt-2">
@@ -55,7 +57,14 @@ function PlanInfoFormContent() {
               "border-purplishBlue bg-pastelBlue bg-opacity-5":
                 plan.title === item.title,
             })}
-            onClick={() => updateFields({ plan: item })}
+            onClick={() =>
+              updateFormData({
+                type: "updateFields",
+                payload: {
+                  plan: item,
+                },
+              })
+            }
           >
             <div>
               <Image
@@ -83,7 +92,12 @@ function PlanInfoFormContent() {
         <span className="text-marinBlue">Monthly</span>
         <div
           className="relative inline-block w-[30px] h-[18px] mobile:w-[40px] mobile:h-[24px] rounded-full bg-marinBlue cursor-pointer"
-          onClick={() => updateFields({ yearlyPlan: !yearlyPlan })}
+          onClick={() =>
+            updateFormData({
+              type: "updateFields",
+              payload: { yearlyPlan: !yearlyPlan },
+            })
+          }
         >
           <div
             className={clsx({
