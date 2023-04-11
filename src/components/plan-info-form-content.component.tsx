@@ -45,13 +45,13 @@ function PlanInfoFormContent() {
   } = useContext(FormContext);
 
   return (
-    <div className="flex flex-col items-center justify-start mt-2">
-      <div className="flex flex-col items-center justify-center w-full space-y-2">
+    <div className="flex flex-col items-center justify-start mt-2 md:mt-8">
+      <div className="flex flex-col items-center justify-center w-full space-y-2 md:flex md:flex-row md:justify-between md:space-y-0 md:space-x-2 md:h-[180px]">
         {plans.map((item) => (
           <div
             key={item.title}
             className={clsx({
-              "flex items-start justify-start w-full px-4 py-2 space-x-4 border rounded-lg cursor-pointer":
+              "flex items-start justify-start w-full px-4 py-2 space-x-4 border rounded-lg cursor-pointer md:h-full md:flex md:flex-col md:justify-between md:items-start md:px-2 md:w-[30%]":
                 true,
               " border-lightGray": plan.title !== item.title,
               "border-purplishBlue bg-pastelBlue bg-opacity-5":
@@ -66,10 +66,10 @@ function PlanInfoFormContent() {
               })
             }
           >
-            <div>
+            <div className="grid place-items-center md:px-4">
               <Image
                 priority
-                className="w-[40px] h-auto pt-2"
+                className="w-[40px] md:w-[50px] h-auto pt-2"
                 aria-hidden
                 src={item.icon}
                 alt=""

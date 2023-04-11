@@ -61,7 +61,7 @@ function Form() {
           alt=""
         />
       </div>
-      <div className="z-20 md:w-[60%] flex md:h-[90%] flex-col items-center justify-center overflow-hidden rounded-md md:my-auto md:flex md:flex-row md:bg-white md:p-4">
+      <div className="z-20 md:w-[80%] flex md:h-[90%] flex-col items-center justify-center overflow-hidden rounded-md md:my-auto md:flex md:flex-row md:bg-white md:p-8">
         <div className="relative flex items-center justify-start md:w-[40%] h-full p-8 space-x-4 text-white bg-transparent md:flex md:flex-col md:space-y-4 md:flex-shrink-0">
           <Image
             priority
@@ -90,7 +90,7 @@ function Form() {
             </div>
           ))}
         </div>
-        <div className="relative w-[240px] mobile:w-[350px] md:w-[70%] bg-white rounded-lg p-6 flex flex-col items-center mobile:items-start justify-start md:h-full">
+        <div className="relative w-[240px] mobile:w-[350px] md:w-full bg-white rounded-lg p-6 flex flex-col items-center mobile:items-start justify-start md:h-full">
           {!isFormFinished ? (
             <>
               <FormHeader
@@ -98,12 +98,12 @@ function Form() {
                 description={currentStep.description}
               />
               <form
-                className="w-full pt-2"
+                className="w-full pt-2 md:px-8"
                 id={currentStep.id}
                 onSubmit={onSubmitHandler}
               >
                 {currentStep.content && currentStep.content}
-                <div className="absolute inset-x-0 bottom-0 items-center justify-between hidden w-full p-8 py-4 mb-0 md:flex">
+                <div className="absolute inset-x-0 bottom-0 items-center justify-between hidden w-full px-12 py-4 mb-0 md:flex">
                   <button
                     disabled={isFirstStep}
                     onClick={() => updateFormData({ type: "back" })}
