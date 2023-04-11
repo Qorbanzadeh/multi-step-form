@@ -17,12 +17,12 @@ function ConfirmationFormContent() {
   } = useContext(FormContext);
   const totalPrice = getTotalPrice(plan, yearlyPlan, addOnes);
   return (
-    <div>
+    <div className="md:p-8">
       {/* prices */}
-      <div className="flex flex-col items-center justify-center p-4 rounded-md bg-alabaster">
+      <div className="flex flex-col items-center justify-center p-4 space-y-4 rounded-md md:p-8 bg-alabaster">
         {/* plan */}
         <div className="flex items-center justify-between w-full">
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center space-y-1">
             <span className="text-lg font-semibold text-marinBlue">
               {plan.title} ({yearlyPlan ? "Yearly" : "Monthly"})
             </span>
@@ -47,9 +47,9 @@ function ConfirmationFormContent() {
           </span>
         </div>
         {/* divider */}
-        <div className="w-full h-[1px] bg-coolGray my-1"></div>
+        <div className="w-full h-[1px] bg-lightGray my-1"></div>
         {/* addons */}
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex flex-col items-center justify-center w-full space-y-4">
           {addOnes.map((addon) => (
             <div
               className="flex items-center justify-between w-full"
@@ -67,8 +67,8 @@ function ConfirmationFormContent() {
         </div>
       </div>
       {/* total price */}
-      <div className="flex items-center justify-center my-2">
-        <span className="flex items-center justify-between w-full text-lg">
+      <div className="flex items-center justify-center p-4 mt-4 md:p-8">
+        <span className="flex items-center justify-between w-full">
           <span>Total price</span>
           <span className="text-purplishBlue">
             +${totalPrice}/{yearlyPlan ? "yr" : "mo"}
