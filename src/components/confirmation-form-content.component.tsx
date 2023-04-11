@@ -46,25 +46,27 @@ function ConfirmationFormContent() {
               : `${plan.price.monthly}/mo`}
           </span>
         </div>
-        {/* divider */}
-        <div className="w-full h-[1px] bg-lightGray my-1"></div>
-        {/* addons */}
-        <div className="flex flex-col items-center justify-center w-full space-y-4">
-          {addOnes.map((addon) => (
-            <div
-              className="flex items-center justify-between w-full"
-              key={addon.id}
-            >
-              <span className="">{addon.title}</span>
-              <span className="font-semibold text-marinBlue">
-                $+
-                {yearlyPlan
-                  ? `${addon.price.yearly}/yr`
-                  : `${addon.price.monthly}/mo`}
-              </span>
+        {addOnes.length > 1 && (
+          <>
+            <div className="w-full h-[1px] bg-lightGray my-1"></div>
+            <div className="flex flex-col items-center justify-center w-full space-y-4">
+              {addOnes.map((addon) => (
+                <div
+                  className="flex items-center justify-between w-full"
+                  key={addon.id}
+                >
+                  <span className="">{addon.title}</span>
+                  <span className="font-semibold text-marinBlue">
+                    $+
+                    {yearlyPlan
+                      ? `${addon.price.yearly}/yr`
+                      : `${addon.price.monthly}/mo`}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
       {/* total price */}
       <div className="flex items-center justify-center p-4 mt-4 md:p-8">
