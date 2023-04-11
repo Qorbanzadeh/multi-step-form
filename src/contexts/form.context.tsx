@@ -50,6 +50,7 @@ export const FormContext = createContext<ContextType>({
   updateFormData: () => {},
   currentStep: {
     title: "",
+    name: "",
     content: "",
     description: "",
     number: 0,
